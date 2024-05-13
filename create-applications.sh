@@ -8,11 +8,10 @@ kubectl config use-context k3d-${CLUSTER_NAME}
 
 kubectl cluster-info
 
-kubectl create namespace monitoring
 
-# kubectl apply -f ./cluster/traefik/traefik-dashboard-ingress.yaml
+kubectl label namespace default istio-injection=enabled
+kubectl create namespace istio-system
 
-helm install -f ./applications/etcd/values.yaml etcd -n etcd ./applications/etcd
-helm install -f ./applications/gitea/values.yaml gitea -n gitea ./applications/gitea
-helm install -f ./applications/prometheus/values.yaml prometheus -n monitoring ./applications/prometheus
-helm install -f ./applications/refinery/values.yaml refinery -n refinery ./applications/refinery
+helm upgrade istio ./applications/ -f ./applications/istio/values.yaml --install -n istio-system
+kubectl apply -f ./applications/istio-gateways/localgateway.yaml -n istio-system
+

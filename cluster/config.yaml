@@ -1,0 +1,68 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: knowledgeshare
+servers: 1
+agents: 3
+kubeAPI:
+  # host: localhost
+  hostIP: 0.0.0.0
+  hostPort: "6443"
+token: superSecretToken
+network: knowledgeshare
+# subnet: "172.28.0.0/16"
+volumes:
+  - volume: /tmp:/tmp/host
+    nodeFilters:
+      - all
+ports:
+  - port: 0.0.0.0:80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 0.0.0.0:443:443
+    nodeFilters:
+      - loadbalancer
+  # - port: 8080:8080
+  #   nodeFilters:
+  #     - loadbalancer
+registries: # define how registries should be created or used
+  create: # creates a default registry to be used with the cluster; same as `--registry-create registry.localhost`
+    name: registry-io
+    host: "0.0.0.0"
+    hostPort: "5000"
+    proxy: # omit this to have a "normal" registry, set this to create a registry proxy (pull-through cache)
+      remoteURL: https://registry-1.docker.io # mirror the DockerHub registry
+      username: "" # unauthenticated
+      password: "" # unauthenticated
+    volumes:
+      - /tmp/k3d/registrycache/local/k3d:/var/lib/registry # persist registry data locally
+  config: |
+    mirrors:
+      "docker.io":
+        endpoint:
+          - http://registry-io:5000
+options:
+  k3d:
+    wait: true
+    timeout: "150s"
+    disableImageVolume: false
+    disableLoadbalancer: false
+    disableRollback: false
+  k3s:
+    extraArgs:
+      - arg: --tls-san=127.0.0.1
+        nodeFilters:
+          - server:*
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:*
+      - arg: "--disable-network-policy"
+        nodeFilters:
+          - server:*
+      - arg: --disable=metrics-server
+        nodeFilters:
+          - server:*
+
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
