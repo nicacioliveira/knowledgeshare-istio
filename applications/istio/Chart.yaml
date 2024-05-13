@@ -1,0 +1,17 @@
+apiVersion: v2
+dependencies:
+  - name: base
+    repository: https://istio-release.storage.googleapis.com/charts
+    version: 1.21.2
+  - name: istiod
+    repository: https://istio-release.storage.googleapis.com/charts
+    version: 1.21.2
+  - name: gateway
+    repository: https://istio-release.storage.googleapis.com/charts
+    version: 1.21.2
+  # - name: kiali-server
+  #   repository: https://kiali.org/helm-charts
+  #   version: 1.30.0
+description: Istio operator
+name: istio-operator
+version: 1.0.0
