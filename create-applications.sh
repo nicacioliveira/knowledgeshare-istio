@@ -12,6 +12,6 @@ kubectl cluster-info
 kubectl label namespace default istio-injection=enabled
 kubectl create namespace istio-system
 
-helm upgrade istio ./applications/ -f ./applications/istio/values.yaml --install -n istio-system
+helm upgrade istio ./applications/istio/ -f ./applications/istio/values.yaml --install -n istio-system
 kubectl apply -f ./applications/istio-gateways/localgateway.yaml -n istio-system
 
